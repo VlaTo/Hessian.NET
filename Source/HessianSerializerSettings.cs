@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace LibraProgramming.Hessian
 {
-    public class Class1
+    public class HessianSerializerSettings
     {
+
     }
 }
