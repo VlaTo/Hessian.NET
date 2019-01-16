@@ -8,3 +8,5 @@ This implementation is binary protocol serializer only for now
 ### Links ###
 * [Official Hessian 2.0 documentation](http://hessian.caucho.com/doc/hessian-serialization.html)
 * Version
+
+UWP: NETFX_CORE;WINDOWS_UWP
