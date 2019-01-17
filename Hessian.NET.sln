@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{730AA2B6-9A1C-42CE-9323-D6B98A766A9F}"
 	ProjectSection(SolutionItems) = preProject
@@ -47,10 +47,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension", "Extension", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4093B042-2C09-4B39-9250-767A9CAB5680}"
 	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraProgramming.Serialization.Hessian", "LibraProgramming.Serialization.Hessian\LibraProgramming.Serialization.Hessian.csproj", "{71187323-5D85-4A59-B336-8FA0332DC2F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraProgramming.Serialization.Hessian", "LibraProgramming.Serialization.Hessian\LibraProgramming.Serialization.Hessian.csproj", "{71187323-5D85-4A59-B336-8FA0332DC2F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{C9D09987-C5E2-4D43-A6A4-7A51E1B68237}"
+	ProjectSection(SolutionItems) = preProject
+		build.ps1 = build.ps1
+		run.build.ps1 = run.build.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +94,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A22BD69A-0B1E-4E0E-B448-105CB81791D6} = {730AA2B6-9A1C-42CE-9323-D6B98A766A9F}
 		{99113836-36D8-43C2-A0DB-CCF26F6FF0D8} = {730AA2B6-9A1C-42CE-9323-D6B98A766A9F}
+		{C9D09987-C5E2-4D43-A6A4-7A51E1B68237} = {4093B042-2C09-4B39-9250-767A9CAB5680}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {18AF71D8-5B48-4551-849B-0FCD1AA1C447}
