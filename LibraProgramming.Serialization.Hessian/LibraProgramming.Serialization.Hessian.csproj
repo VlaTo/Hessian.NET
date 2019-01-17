@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)' == ''">net45;net40;netstandard1.3;netstandard2.0</TargetFrameworks>
@@ -17,12 +17,12 @@
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
-    <DefineConstants>NET45;</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(TargetFramework)'=='net40'">
     <DefineConstants>NET40;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
+    <DefineConstants>NET45;</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
@@ -33,14 +33,31 @@
     <DefineConstants>NETSTANDARD20;</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)'=='net40'">
+    <Reference Include="System"/>
+    <Reference Include="System.Core"/>
+    <Reference Include="System.Xml.Linq"/>
+    <Reference Include="System.Data.DataSetExtensions"/>
+    <Reference Include="Microsoft.CSharp"/>
+    <Reference Include="System.Data"/>
+    <Reference Include="System.Xml"/>
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)'=='net45'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
     <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">

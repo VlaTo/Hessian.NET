@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LibraProgramming.Serialization.Hessian.Core
+﻿namespace LibraProgramming.Serialization.Hessian.Core
 {
-    interface ICondition
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    internal interface ICondition<in T>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        bool IsMet(T value);
     }
 }
