@@ -55,8 +55,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraProgramming.Serializat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{C9D09987-C5E2-4D43-A6A4-7A51E1B68237}"
 	ProjectSection(SolutionItems) = preProject
-		build.ps1 = build.ps1
-		run.build.ps1 = run.build.ps1
+		Builds\build.ps1 = Builds\build.ps1
+		psake.psm1 = psake.psm1
+		Builds\run.build.ps1 = Builds\run.build.ps1
+		version.json = version.json
 	EndProjectSection
 EndProject
 Global
