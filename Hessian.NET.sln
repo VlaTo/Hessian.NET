@@ -3,55 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{730AA2B6-9A1C-42CE-9323-D6B98A766A9F}"
-	ProjectSection(SolutionItems) = preProject
-		Source\DataContractHessianSerializer.cs = Source\DataContractHessianSerializer.cs
-		Source\DisposableStreamHandler.cs = Source\DisposableStreamHandler.cs
-		Source\HessianInputReader.cs = Source\HessianInputReader.cs
-		Source\HessianObjectSerializerFactory.cs = Source\HessianObjectSerializerFactory.cs
-		Source\HessianObjectWriterFactory.ObjectWriters.cs = Source\HessianObjectWriterFactory.ObjectWriters.cs
-		Source\HessianOutputWriter.cs = Source\HessianOutputWriter.cs
-		Source\HessianSerializationContext.cs = Source\HessianSerializationContext.cs
-		Source\HessianSerializationScheme.cs = Source\HessianSerializationScheme.cs
-		Source\HessianSerializerException.cs = Source\HessianSerializerException.cs
-		Source\HessianSerializerSettings.cs = Source\HessianSerializerSettings.cs
-		Source\IObjectSerializer.cs = Source\IObjectSerializer.cs
-		Source\IObjectSerializerFactory.cs = Source\IObjectSerializerFactory.cs
-		Source\ISerializationElement.cs = Source\ISerializationElement.cs
-		Source\LeadingByte.cs = Source\LeadingByte.cs
-		Source\Marker.cs = Source\Marker.cs
-		Source\ObjectElement.cs = Source\ObjectElement.cs
-		Source\ObjectPreamble.cs = Source\ObjectPreamble.cs
-		Source\ObjectPropertyComparer.cs = Source\ObjectPropertyComparer.cs
-		Source\PropertyElement.cs = Source\PropertyElement.cs
-		Source\Throw.cs = Source\Throw.cs
-		Source\ValueElement.cs = Source\ValueElement.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Specification", "Specification", "{A22BD69A-0B1E-4E0E-B448-105CB81791D6}"
-	ProjectSection(SolutionItems) = preProject
-		Source\Specification\AndSpecification.cs = Source\Specification\AndSpecification.cs
-		Source\Specification\BinarySpecification.cs = Source\Specification\BinarySpecification.cs
-		Source\Specification\ISpecification.cs = Source\Specification\ISpecification.cs
-		Source\Specification\NotSpecification.cs = Source\Specification\NotSpecification.cs
-		Source\Specification\OrSpecification.cs = Source\Specification\OrSpecification.cs
-		Source\Specification\Specification.cs = Source\Specification\Specification.cs
-		Source\Specification\SpecificationExtension.cs = Source\Specification\SpecificationExtension.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension", "Extension", "{99113836-36D8-43C2-A0DB-CCF26F6FF0D8}"
-	ProjectSection(SolutionItems) = preProject
-		Source\Extension\DateTimeExtension.cs = Source\Extension\DateTimeExtension.cs
-		Source\Extension\Maybe.cs = Source\Extension\Maybe.cs
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4093B042-2C09-4B39-9250-767A9CAB5680}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraProgramming.Serialization.Hessian", "LibraProgramming.Serialization.Hessian\LibraProgramming.Serialization.Hessian.csproj", "{71187323-5D85-4A59-B336-8FA0332DC2F9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{C9D09987-C5E2-4D43-A6A4-7A51E1B68237}"
 	ProjectSection(SolutionItems) = preProject
@@ -61,42 +17,36 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{C9D099
 		version.json = version.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{FA363527-27A3-4023-8854-EC894C461D4F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraProgramming.Serialization.Hessian", "Source\LibraProgramming.Serialization.Hessian.csproj", "{9F2DAD1D-8535-446C-9621-0A12AF227C54}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6C2273D4-4533-4CD0-A695-25A4C0272D59}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraProgramming.Serialization.Tests", "Tests\LibraProgramming.Serialization.Tests.csproj", "{8E187A2F-971B-4AEC-A365-A9F9E4512543}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|ARM = Debug|ARM
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-		Release|ARM = Release|ARM
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|ARM.Build.0 = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|x64.Build.0 = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Debug|x86.Build.0 = Debug|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|ARM.ActiveCfg = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|ARM.Build.0 = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|x64.ActiveCfg = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|x64.Build.0 = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|x86.ActiveCfg = Release|Any CPU
-		{71187323-5D85-4A59-B336-8FA0332DC2F9}.Release|x86.Build.0 = Release|Any CPU
+		{9F2DAD1D-8535-446C-9621-0A12AF227C54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2DAD1D-8535-446C-9621-0A12AF227C54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2DAD1D-8535-446C-9621-0A12AF227C54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2DAD1D-8535-446C-9621-0A12AF227C54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E187A2F-971B-4AEC-A365-A9F9E4512543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E187A2F-971B-4AEC-A365-A9F9E4512543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E187A2F-971B-4AEC-A365-A9F9E4512543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E187A2F-971B-4AEC-A365-A9F9E4512543}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A22BD69A-0B1E-4E0E-B448-105CB81791D6} = {730AA2B6-9A1C-42CE-9323-D6B98A766A9F}
-		{99113836-36D8-43C2-A0DB-CCF26F6FF0D8} = {730AA2B6-9A1C-42CE-9323-D6B98A766A9F}
 		{C9D09987-C5E2-4D43-A6A4-7A51E1B68237} = {4093B042-2C09-4B39-9250-767A9CAB5680}
+		{9F2DAD1D-8535-446C-9621-0A12AF227C54} = {FA363527-27A3-4023-8854-EC894C461D4F}
+		{8E187A2F-971B-4AEC-A365-A9F9E4512543} = {6C2273D4-4533-4CD0-A695-25A4C0272D59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {18AF71D8-5B48-4551-849B-0FCD1AA1C447}

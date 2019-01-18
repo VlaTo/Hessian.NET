@@ -1,14 +1,14 @@
-﻿namespace LibraProgramming.Hessian
+﻿namespace LibraProgramming.Serialization.Hessian.Core
 {
     /// <summary>
-    /// 
+    /// The marker byte.
     /// </summary>
     internal static class Marker
     {
         public const byte True = (byte) 'T';//0x54;
         public const byte False = (byte) 'F';// 0x46;
         public const byte Null = (byte) 'N';//0x4E;
-        public const byte BinaryNonfinalChunk = (byte) 'b';//0x41;
+        public const byte BinaryNonFinalChunk = (byte) 'b';//0x41;
         public const byte BinaryFinalChunk = (byte) 'B';//0x42;
         public const byte ClassDefinition = (byte) 'C';//0x43;
         public const byte DateTimeLong = 0x4A;
@@ -22,7 +22,7 @@
         public const byte UnpackedInteger = (byte) 'I';// 0x49;
         public const byte PackedLong = (byte) 'Y';// 0x59;
         public const byte UnpackedLong = (byte) 'L';// 0x4C;
-        public const byte StringNonfinalChunk = 0x52;
+        public const byte StringNonFinalChunk = 0x52;
         public const byte StringFinalChunk = 0x53;
         public const byte FixedLengthList = 0x56;
         public const byte ClassReference = (byte) 'O';//0x4F

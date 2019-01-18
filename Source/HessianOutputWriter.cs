@@ -1,15 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using LibraProgramming.Hessian.Extension;
+using LibraProgramming.Serialization.Hessian.Core;
+using LibraProgramming.Serialization.Hessian.Core.Extensions;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
     /// <summary>
     /// Class for writing Hessian-encoded data into stream. 
     /// </summary>
     public class HessianOutputWriter : DisposableStreamHandler
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public HessianOutputWriter(Stream stream)
             : base(stream)
         {
@@ -47,6 +52,12 @@ namespace LibraProgramming.Hessian
             WriteBytes(buffer, 0, buffer.Length);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
         public virtual void WriteBytes(byte[] buffer, int offset, int count)
         {
             if (offset < 0)
@@ -71,7 +82,7 @@ namespace LibraProgramming.Hessian
 
             while (count > chunkSize)
             {
-                Stream.WriteByte(Marker.BinaryNonfinalChunk);
+                Stream.WriteByte(Marker.BinaryNonFinalChunk);
                 Stream.WriteByte(chunkSize >> 8);
                 Stream.WriteByte(chunkSize & 0xFF);
                 Stream.Write(buffer, offset, chunkSize);
@@ -86,6 +97,10 @@ namespace LibraProgramming.Hessian
             Stream.Write(buffer, offset, count);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteDateTime(DateTime value)
         {
             if (value.Second == 0)
@@ -114,6 +129,10 @@ namespace LibraProgramming.Hessian
             Stream.WriteByte((byte)dt);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteDouble(double value)
         {
             if (value.Equals(0.0d))
@@ -176,6 +195,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteInt32(int value)
         {
             if (-16 <= value && value < 48)
@@ -203,6 +226,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteInt64(long value)
         {
             if (-8 <= value && value < 16)
@@ -242,6 +269,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteString(string value)
         {
             if (String.IsNullOrEmpty(value))
@@ -281,7 +312,7 @@ namespace LibraProgramming.Hessian
                 var chunk = value.Substring(position, count);
                 var bytes = Encoding.UTF8.GetBytes(chunk.ToCharArray());
 
-                Stream.WriteByte(final ? Marker.StringFinalChunk : Marker.StringNonfinalChunk);
+                Stream.WriteByte(final ? Marker.StringFinalChunk : Marker.StringNonFinalChunk);
                 Stream.WriteByte((byte)(count >> 8));
                 Stream.WriteByte((byte)count);
                 Stream.Write(bytes, 0, bytes.Length);
@@ -290,15 +321,25 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void BeginClassDefinition()
         {
             Stream.WriteByte(Marker.ClassDefinition);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void EndClassDefinition()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
         public virtual void WriteObjectReference(int index)
         {
             if (index < 0x10)
@@ -312,6 +353,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
         public virtual void WriteInstanceReference(int index)
         {
             Stream.WriteByte(Marker.InstanceReference);

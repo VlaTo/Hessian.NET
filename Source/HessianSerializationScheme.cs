@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.Serialization;
+using LibraProgramming.Serialization.Hessian.Core;
+using LibraProgramming.Serialization.Hessian.Core.Extensions;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
-    internal class HessianSerializationScheme
+    internal sealed class HessianSerializationScheme
     {
         public Type ObjectType
         {
             get;
-            private set;
         }
 
         public ISerializationElement Element
@@ -44,9 +44,7 @@ namespace LibraProgramming.Hessian
 
         private static ISerializationElement CreateSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            var info = type.GetTypeInfo();
-
-            if (IsSimpleType(info))
+            if (type.IsSimpleType())
             {
                 var serializer = factory.GetSerializer(type);
                 return new ValueElement(type, serializer);
@@ -57,15 +55,12 @@ namespace LibraProgramming.Hessian
 
         private static ISerializationElement BuildSerializationObject(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            ISerializationElement existing;
-
-            if (catalog.TryGetValue(type, out existing))
+            if (catalog.TryGetValue(type, out var existing))
             {
                 return existing;
             }
 
-            var info = type.GetTypeInfo();
-            var contract = info.GetCustomAttribute<DataContractAttribute>();
+            var contract = type.GetCustomAttribute<DataContractAttribute>();
 
             if (null == contract)
             {
@@ -77,7 +72,7 @@ namespace LibraProgramming.Hessian
 
             catalog.Add(type, element);
 
-            foreach (var property in info.DeclaredProperties)
+            foreach (var property in type.GetDeclaredProperties())
             {
                 var attribute = property.GetCustomAttribute<DataMemberAttribute>();
 
@@ -99,21 +94,6 @@ namespace LibraProgramming.Hessian
             properties.Sort(new ObjectPropertyComparer());
 
             return element;
-        }
-
-        private static bool IsSimpleType(TypeInfo typeinfo)
-        {
-            if (typeinfo.IsValueType || typeinfo.IsEnum || typeinfo.IsPrimitive)
-            {
-                return true;
-            }
-
-            if (typeof (String) == typeinfo.AsType())
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }
