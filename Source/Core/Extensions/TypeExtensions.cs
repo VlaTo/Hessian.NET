@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 #if (NET45 || NETSTANDARD13 || NETSTANDARD20)
 using System.Runtime.Serialization;
@@ -50,6 +52,53 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
+        public static IEnumerable<Type> GetInterfaces(this Type type)
+        {
+#if NETSTANDARD13
+            var info = type.GetTypeInfo();
+            return info.ImplementedInterfaces;
+#else
+            return type.GetInterfaces();
+#endif
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Type GetGenericTypeArgument(this Type type)
+        {
+            Type[] types;
+
+#if NETSTANDARD13
+            types = type.GenericTypeArguments;
+#else
+            types = type.GetGenericArguments();
+#endif
+            return types[0];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsGenericType(this Type type)
+        {
+#if NETSTANDARD13
+            var info = type.GetTypeInfo();
+            return info.IsGenericType && info.ContainsGenericParameters;
+#else
+            return type.IsGenericType && type.ContainsGenericParameters;
+#endif
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static bool IsSimpleType(this Type type)
         {
 #if (NET40 || NET45 || NETSTANDARD20)
@@ -59,6 +108,63 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
             return info.IsValueType || info.IsEnum || info.IsPrimitive
 #endif
                    || typeof(string) == type;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsTypedArray(this Type type)
+        {
+            return type.IsArray && type.HasElementType;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsTypedCollection(this Type type)
+        {
+            if (type.IsGenericType())
+            {
+                var definition = type.GetGenericTypeDefinition();
+                return typeof(ICollection) == definition;
+            }
+
+            return type.GetInterfaces().Any(IsTypedCollection);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsEnumerable(this Type type)
+        {
+            if (typeof(IEnumerable) == type)
+            {
+                return true;
+            }
+
+            if (type.IsGenericType())
+            {
+                var temp = type.GetGenericTypeDefinition();
+                return typeof(IEnumerable) == temp;
+            }
+
+            var interfaces = type.GetInterfaces();
+
+            foreach (var @interface in interfaces)
+            {
+                if (@interface.IsEnumerable())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

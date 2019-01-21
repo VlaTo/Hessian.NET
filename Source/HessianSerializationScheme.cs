@@ -49,11 +49,21 @@ namespace LibraProgramming.Serialization.Hessian
                 var serializer = factory.GetSerializer(type);
                 return new ValueElement(type, serializer);
             }
-            
-            return BuildSerializationObject(type, catalog, factory);
+
+            if (type.IsTypedArray())
+            {
+                return BuildArraySerializationElement(type, catalog, factory);
+            }
+
+            if (type.IsTypedCollection())
+            {
+                return BuildCollectionSerializationElement(type, catalog, factory);
+            }
+
+            return BuildClassSerializationElement(type, catalog, factory);
         }
 
-        private static ISerializationElement BuildSerializationObject(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        private static ISerializationElement BuildClassSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
             if (catalog.TryGetValue(type, out var existing))
             {
@@ -64,7 +74,7 @@ namespace LibraProgramming.Serialization.Hessian
 
             if (null == contract)
             {
-                throw new Exception();
+                throw new HessianSerializerException();
             }
 
             var properties = new List<PropertyElement>();
@@ -86,14 +96,52 @@ namespace LibraProgramming.Serialization.Hessian
                     continue;
                 }
 
-                var prop = new PropertyElement(property, CreateSerializationElement(property.PropertyType, catalog, factory));
-
-                properties.Add(prop);
+                properties.Add(new PropertyElement(
+                    property,
+                    CreateSerializationElement(property.PropertyType, catalog, factory)
+                ));
             }
 
             properties.Sort(new ObjectPropertyComparer());
 
             return element;
         }
+
+        private static ISerializationElement BuildArraySerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            if (1 != type.GetArrayRank())
+            {
+                throw new HessianSerializerException();
+            }
+
+            var elementType = type.GetElementType();
+
+            if (typeof(object) == elementType)
+            {
+                // untyped
+            }
+
+            return new FixedLengthTypedArrayElement(
+                CreateSerializationElement(elementType, catalog, factory)
+            );
+        }
+
+        private static ISerializationElement BuildCollectionSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            var elementType = type.GetGenericTypeArgument();
+
+            return new TypedCollectionElement(
+                CreateSerializationElement(elementType, catalog, factory)
+            );
+        }
+
+        /*private static ISerializationElement BuildEnumerableSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            var genericType = type.GetGenericType();
+
+            return new VariableLengthTypedArrayElement(
+                genericType
+            );
+        }*/
     }
 }

@@ -24,7 +24,7 @@
         public const byte UnpackedLong = (byte) 'L';// 0x4C;
         public const byte StringNonFinalChunk = 0x52;
         public const byte StringFinalChunk = 0x53;
-        public const byte FixedLengthList = 0x56;
+        public const byte FixedLengthList = (byte) 'V';// 0x56;
         public const byte ClassReference = (byte) 'O';//0x4F
         public const byte InstanceReference = (byte) 'Q'; //0x51;
     }

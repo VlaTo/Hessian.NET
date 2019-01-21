@@ -73,7 +73,7 @@ namespace LibraProgramming.Serialization.Hessian
 
             index = context.Classes.IndexOf(ObjectType);
 
-            if (index < 0)
+            if (0 > index)
             {
                 writer.BeginClassDefinition();
                 writer.WriteString(ClassName);

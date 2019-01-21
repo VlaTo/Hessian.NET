@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using LibraProgramming.Serialization.Hessian.Core;
@@ -11,6 +12,8 @@ namespace LibraProgramming.Serialization.Hessian
     /// </summary>
     public class HessianOutputWriter : DisposableStreamHandler
     {
+        private readonly Stack<DisposeAction<ArrayContext>> arrays;
+
         /// <summary>
         /// 
         /// </summary>
@@ -18,6 +21,7 @@ namespace LibraProgramming.Serialization.Hessian
         public HessianOutputWriter(Stream stream)
             : base(stream)
         {
+            arrays = new Stack<DisposeAction<ArrayContext>>();
         }
 
         /// <summary>
@@ -361,6 +365,53 @@ namespace LibraProgramming.Serialization.Hessian
         {
             Stream.WriteByte(Marker.InstanceReference);
             WriteInt32(index);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elementType"></param>
+        /// <param name="length"></param>
+        public virtual IDisposable BeginFixedArray(string elementType, int length)
+        {
+            if (8 > length)
+            {
+                Stream.WriteByte((byte) (0x70 + length));
+                WriteString(elementType);
+            }
+            else
+            {
+                Stream.WriteByte(Marker.FixedLengthList);
+                WriteString(elementType);
+                WriteInt32(length);
+            }
+
+            var arrayContext = new ArrayContext();
+            var disposer = new DisposeAction<ArrayContext>(arrayContext, (instance, context) =>
+            {
+                if (arrays.Pop() != instance)
+                {
+                    throw new HessianSerializerException();
+                }
+
+                EndFixedArray(context);
+            });
+
+            arrays.Push(disposer);
+
+            return disposer;
+        }
+
+        private void EndFixedArray(ArrayContext context)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class ArrayContext
+        {
+            
         }
     }
 }

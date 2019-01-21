@@ -19,6 +19,8 @@ namespace LibraProgramming.Serialization.Tests.Serialization
                 Action.Invoke(writer);
                 Data = stream.ToArray();
             }
+
+            DebugWriteArray(Data);
         }
     }
 }
