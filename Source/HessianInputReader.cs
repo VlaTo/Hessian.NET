@@ -1,27 +1,45 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using LibraProgramming.Hessian.Extension;
+using LibraProgramming.Serialization.Hessian.Core;
+using LibraProgramming.Serialization.Hessian.Core.Extensions;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HessianInputReader : DisposableStreamHandler
     {
         private ObjectPreamble preamble;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsClassDefinition => ObjectPreamble.ClassDefinition == preamble;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsInstanceReference => ObjectPreamble.InstanceReference == preamble;
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected LeadingByte LeadingByte
         {
             get;
+            set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public HessianInputReader(Stream stream)
             : base(stream)
         {
-            LeadingByte = new LeadingByte();
+            LeadingByte = LeadingByte.Empty;
         }
 
         /// <summary>
@@ -32,12 +50,12 @@ namespace LibraProgramming.Hessian
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsTrue)
+            if (LeadingByte.IsTrue())
             {
                 return true;
             }
 
-            if (!LeadingByte.IsFalse)
+            if (false == LeadingByte.IsFalse())
             {
                 throw new HessianSerializerException();
             }
@@ -45,26 +63,30 @@ namespace LibraProgramming.Hessian
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public virtual int ReadInt32()
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsTinyInt32)
+            if (LeadingByte.IsTinyInt32())
             {
-                return LeadingByte.Data - 144;
+                return LeadingByte.Value - 144;
             }
 
-            if (LeadingByte.IsShortInt32)
+            if (LeadingByte.IsShortInt32())
             {
                 return ReadShortInt32();
             }
 
-            if (LeadingByte.IsCompactInt32)
+            if (LeadingByte.IsCompactInt32())
             {
                 return ReadCompactInt32();
             }
 
-            if (!LeadingByte.IsUnpackedInt32)
+            if (false == LeadingByte.IsUnpackedInt32())
             {
                 throw new HessianSerializerException();
             }
@@ -72,31 +94,35 @@ namespace LibraProgramming.Hessian
             return ReadUnpackedInt32();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public virtual long ReadInt64()
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsTinyInt64)
+            if (LeadingByte.IsTinyInt64())
             {
-                return LeadingByte.Data - 224;
+                return LeadingByte.Value - 224;
             }
 
-            if (LeadingByte.IsShortInt64)
+            if (LeadingByte.IsShortInt64())
             {
                 return ReadShortInt64();
             }
 
-            if (LeadingByte.IsCompactInt64)
+            if (LeadingByte.IsCompactInt64())
             {
                 return ReadCompactInt64();
             }
 
-            if (LeadingByte.IsPackedInt64)
+            if (LeadingByte.IsPackedInt64())
             {
                 return ReadPackedInt64();
             }
 
-            if (!LeadingByte.IsUnpackedInt64)
+            if (false == LeadingByte.IsUnpackedInt64())
             {
                 throw new HessianSerializerException();
             }
@@ -112,12 +138,12 @@ namespace LibraProgramming.Hessian
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsNull)
+            if (LeadingByte.IsNull())
             {
                 return null;
             }
 
-            if (LeadingByte.IsCompactBinary)
+            if (LeadingByte.IsCompactBinary())
             {
                 return ReadBinaryCompact15();
             }
@@ -125,7 +151,7 @@ namespace LibraProgramming.Hessian
             var count = 0;
             var buffer = new byte[0];
 
-            while (LeadingByte.IsNonfinalChunkBinary || LeadingByte.IsFinalChunkBinary)
+            while (LeadingByte.IsNonFinalChunkBinary() || LeadingByte.IsFinalChunkBinary())
             {
                 var length = GetChunkLength();
 
@@ -145,7 +171,7 @@ namespace LibraProgramming.Hessian
 
                 count += length;
 
-                if (LeadingByte.IsFinalChunkBinary)
+                if (LeadingByte.IsFinalChunkBinary())
                 {
                     break;
                 }
@@ -164,32 +190,32 @@ namespace LibraProgramming.Hessian
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsZeroDouble)
+            if (LeadingByte.IsZeroDouble())
             {
                 return 0.0d;
             }
 
-            if (LeadingByte.IsOneDouble)
+            if (LeadingByte.IsOneDouble())
             {
                 return 1.0d;
             }
 
-            if (LeadingByte.IsTinyDouble)
+            if (LeadingByte.IsTinyDouble())
             {
                 return Stream.ReadByte();
             }
 
-            if (LeadingByte.IsShortDouble)
+            if (LeadingByte.IsShortDouble())
             {
                 return ReadShortDouble();
             }
 
-            if (LeadingByte.IsCompactDouble)
+            if (LeadingByte.IsCompactDouble())
             {
                 return ReadCompactDouble();
             }
 
-            if (!LeadingByte.IsUnpackedDouble)
+            if (false == LeadingByte.IsUnpackedDouble())
             {
                 throw new HessianSerializerException();
             }
@@ -205,26 +231,26 @@ namespace LibraProgramming.Hessian
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsTinyString)
+            if (LeadingByte.IsTinyString())
             {
-                return GetStringChunk(LeadingByte.Data);
+                return GetStringChunk(LeadingByte.Value);
             }
 
-            if (LeadingByte.IsCompactString)
+            if (LeadingByte.IsCompactString())
             {
                 return ReadCompactString();
             }
 
             var builder = new StringBuilder();
 
-            while (LeadingByte.IsNonfinalChunkString || LeadingByte.IsFinalChunkString)
+            while (LeadingByte.IsNonFinalChunkString() || LeadingByte.IsFinalChunkString())
             {
                 var chunkLength = GetChunkLength();
                 var chunk = GetStringChunk(chunkLength);
 
                 builder.Append(chunk);
 
-                if (LeadingByte.IsFinalChunkString)
+                if (LeadingByte.IsFinalChunkString())
                 {
                     break;
                 }
@@ -243,13 +269,13 @@ namespace LibraProgramming.Hessian
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsCompactDateTime)
+            if (LeadingByte.IsCompactDateTime())
             {
                 var minutes = ReadUnpackedInt32();
                 return DateTimeExtension.FromMinutes(minutes);
             }
 
-            if (!LeadingByte.IsUnpackedDateTime)
+            if (false == LeadingByte.IsUnpackedDateTime())
             {
                 throw new HessianSerializerException();
             }
@@ -260,19 +286,19 @@ namespace LibraProgramming.Hessian
         /// <summary>
         /// 
         /// </summary>
-        public void BeginObject()
+        public virtual void BeginObject()
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsClassDefinition)
+            if (LeadingByte.IsClassDefinition())
             {
                 preamble = ObjectPreamble.ClassDefinition;
             }
-            else if (LeadingByte.IsShortObjectReference || LeadingByte.IsLongObjectReference)
+            else if (LeadingByte.IsShortObjectReference() || LeadingByte.IsLongObjectReference())
             {
                 preamble = ObjectPreamble.ObjectReference;
             }
-            else if (LeadingByte.IsInstanceReference)
+            else if (LeadingByte.IsInstanceReference())
             {
                 preamble = ObjectPreamble.InstanceReference;
             }
@@ -282,25 +308,35 @@ namespace LibraProgramming.Hessian
             }
         }
 
-        public void EndObject()
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void EndObject()
         {
             preamble = ObjectPreamble.None;
         }
 
-        public void EndClassDefinition()
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void EndClassDefinition()
         {
         }
 
-        public int ReadObjectReference()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual int ReadObjectReference()
         {
             ReadLeadingByte();
 
-            if (LeadingByte.IsShortObjectReference)
+            if (LeadingByte.IsShortObjectReference())
             {
-                return LeadingByte.Data - 0x60;
+                return LeadingByte.Value - 0x60;
             }
 
-            if (!LeadingByte.IsLongObjectReference)
+            if (false == LeadingByte.IsLongObjectReference())
             {
                 throw new HessianSerializerException();
             }
@@ -308,11 +344,18 @@ namespace LibraProgramming.Hessian
             return ReadInt32();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public int ReadInstanceReference()
         {
             return ReadInt32();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected void ReadLeadingByte()
         {
             var data = Stream.ReadByte();
@@ -322,18 +365,18 @@ namespace LibraProgramming.Hessian
                 throw new HessianSerializerException();
             }
 
-            LeadingByte.SetData((byte)data);
+            LeadingByte = new LeadingByte((byte) data);
         }
 
         private int ReadShortInt32()
         {
             var data = Stream.ReadByte();
-            return ((LeadingByte.Data - 200) << 8) | data;
+            return ((LeadingByte.Value - 200) << 8) | data;
         }
 
         private int ReadCompactInt32()
         {
-            var value = (LeadingByte.Data - 212) << 16;
+            var value = (LeadingByte.Value - 212) << 16;
 
             value |= (Stream.ReadByte() << 8);
             value |= Stream.ReadByte();
@@ -355,18 +398,19 @@ namespace LibraProgramming.Hessian
         private long ReadShortInt64()
         {
             var data = Stream.ReadByte();
-            return ((LeadingByte.Data - 248) << 8) | data;
+            return ((LeadingByte.Value - 248) << 8) | data;
         }
 
         private long ReadCompactInt64()
         {
-            var value = (LeadingByte.Data - 60) << 16;
+            var value = (LeadingByte.Value - 60) << 16;
 
             value |= (Stream.ReadByte() << 8);
             value |= Stream.ReadByte();
 
             return value;
         }
+
         private long ReadPackedInt64()
         {
             var value = Stream.ReadByte() << 24;
@@ -388,22 +432,22 @@ namespace LibraProgramming.Hessian
             value |= ((long) Stream.ReadByte() << 24);
             value |= ((long) Stream.ReadByte() << 16);
             value |= ((long) Stream.ReadByte() << 8);
-            value |= Stream.ReadByte();
+            value |= (uint) Stream.ReadByte();
 
             return value;
         }
 
         private byte[] ReadBinaryCompact15()
         {
-            var size = LeadingByte.Data - 32;
-            var temp = new byte[size];
+            var size = LeadingByte.Value - 32;
+            var bytes = new byte[size];
 
-            if (Stream.Read(temp, 0, size) != size)
+            if (Stream.Read(bytes, 0, size) != size)
             {
                 throw new HessianSerializerException();
             }
 
-            return temp;
+            return bytes;
         }
 
         private double ReadShortDouble()
@@ -434,7 +478,7 @@ namespace LibraProgramming.Hessian
             for (var count = 8; count > 0; count--)
             {
                 value <<= 8;
-                value |= Stream.ReadByte();
+                value |= (uint) Stream.ReadByte();
             }
 
             return BitConverter.Int64BitsToDouble(value);
@@ -442,7 +486,7 @@ namespace LibraProgramming.Hessian
 
         private string ReadCompactString()
         {
-            var length = (LeadingByte.Data - 0x30) << 8;
+            var length = (LeadingByte.Value - 0x30) << 8;
 
             length |= Stream.ReadByte();
 
@@ -453,7 +497,7 @@ namespace LibraProgramming.Hessian
         {
             var buffer = new StringBuilder();
 
-            while (length-- > 0)
+            while (0 < length--)
             {
                 var ch = ReadChar();
                 buffer.Append(ch);
@@ -466,6 +510,7 @@ namespace LibraProgramming.Hessian
         {
             var b0 = Stream.ReadByte();
             var b1 = Stream.ReadByte();
+
             return (b0 << 8) + b1;
         }
 

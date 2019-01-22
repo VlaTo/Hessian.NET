@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
+using LibraProgramming.Serialization.Hessian.Core;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
     /// <summary>
     /// Serialize objects to binary and deserialize binary to objects using the Caucho Hessian 2.0 Serialization Protocol.
@@ -12,6 +13,7 @@ namespace LibraProgramming.Hessian
     public sealed class DataContractHessianSerializer
     {
         private readonly Type type;
+        private readonly HessianSerializerSettings settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataContractHessianSerializer" /> class to serialize or deserialize an object of the specified type and serializer settings.
@@ -21,6 +23,7 @@ namespace LibraProgramming.Hessian
         public DataContractHessianSerializer(Type type, HessianSerializerSettings settings = null)
         {
             this.type = type;
+            this.settings = settings ?? DefaultHessianSerializerSettings.Instance;
         }
 
         /// <summary>

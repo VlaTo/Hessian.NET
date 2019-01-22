@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.Serialization;
+using LibraProgramming.Serialization.Hessian.Core;
+using LibraProgramming.Serialization.Hessian.Core.Extensions;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
-    internal class HessianSerializationScheme
+    internal sealed class HessianSerializationScheme
     {
         public Type ObjectType
         {
             get;
-            private set;
         }
 
         public ISerializationElement Element
@@ -44,32 +44,47 @@ namespace LibraProgramming.Hessian
 
         private static ISerializationElement CreateSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            var info = type.GetTypeInfo();
-
-            if (IsSimpleType(info))
+            if (type.IsSimpleType())
             {
                 var serializer = factory.GetSerializer(type);
                 return new ValueElement(type, serializer);
             }
-            
-            return BuildSerializationObject(type, catalog, factory);
+
+            if (type.IsTypedArray())
+            {
+                return BuildArraySerializationElement(type, catalog, factory);
+            }
+
+            if (type.IsTypedList())
+            {
+                return BuildListSerializationElement(type, catalog, factory);
+            }
+
+            if (type.IsTypedCollection())
+            {
+                return BuildCollectionSerializationElement(type, catalog, factory);
+            }
+
+            if (type.IsTypedEnumerable())
+            {
+                return BuildEnumerableSerializationElement(type, catalog, factory);
+            }
+
+            return BuildClassSerializationElement(type, catalog, factory);
         }
 
-        private static ISerializationElement BuildSerializationObject(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        private static ISerializationElement BuildClassSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            ISerializationElement existing;
-
-            if (catalog.TryGetValue(type, out existing))
+            if (catalog.TryGetValue(type, out var existing))
             {
                 return existing;
             }
 
-            var info = type.GetTypeInfo();
-            var contract = info.GetCustomAttribute<DataContractAttribute>();
+            var contract = type.GetCustomAttribute<DataContractAttribute>();
 
             if (null == contract)
             {
-                throw new Exception();
+                throw new HessianSerializerException();
             }
 
             var properties = new List<PropertyElement>();
@@ -77,7 +92,7 @@ namespace LibraProgramming.Hessian
 
             catalog.Add(type, element);
 
-            foreach (var property in info.DeclaredProperties)
+            foreach (var property in type.GetDeclaredProperties())
             {
                 var attribute = property.GetCustomAttribute<DataMemberAttribute>();
 
@@ -91,9 +106,10 @@ namespace LibraProgramming.Hessian
                     continue;
                 }
 
-                var prop = new PropertyElement(property, CreateSerializationElement(property.PropertyType, catalog, factory));
-
-                properties.Add(prop);
+                properties.Add(new PropertyElement(
+                    property,
+                    CreateSerializationElement(property.PropertyType, catalog, factory)
+                ));
             }
 
             properties.Sort(new ObjectPropertyComparer());
@@ -101,19 +117,51 @@ namespace LibraProgramming.Hessian
             return element;
         }
 
-        private static bool IsSimpleType(TypeInfo typeinfo)
+        private static ISerializationElement BuildArraySerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            if (typeinfo.IsValueType || typeinfo.IsEnum || typeinfo.IsPrimitive)
+            if (1 != type.GetArrayRank())
             {
-                return true;
+                throw new HessianSerializerException();
             }
 
-            if (typeof (String) == typeinfo.AsType())
+            var elementType = type.GetElementType();
+
+            if (typeof(object) == elementType)
             {
-                return true;
+                // untyped
             }
 
-            return false;
+            return new FixedLengthTypedListElement(
+                elementType.MakeArrayType(1),
+                CreateSerializationElement(elementType, catalog, factory)
+            );
+        }
+
+        private static ISerializationElement BuildListSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            var elementType = type.GetGenericTypeArgument();
+            return new FixedLengthTypedListElement(
+                typeof(IList<>).MakeGenericType(elementType),
+                CreateSerializationElement(elementType, catalog, factory)
+            );
+        }
+
+        private static ISerializationElement BuildCollectionSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            var elementType = type.GetGenericTypeArgument();
+            return new FixedLengthTypedListElement(
+                typeof(ICollection<>).MakeGenericType(elementType),
+                CreateSerializationElement(elementType, catalog, factory)
+            );
+        }
+
+        private static ISerializationElement BuildEnumerableSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            var elementType = type.GetGenericTypeArgument();
+            return new VariableLengthTypedListElement(
+                typeof(IEnumerable<>).MakeGenericType(elementType),
+                CreateSerializationElement(elementType, catalog, factory)
+            );
         }
     }
 }

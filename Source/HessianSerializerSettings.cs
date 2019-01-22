@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LibraProgramming.Hessian
+﻿namespace LibraProgramming.Serialization.Hessian
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HessianSerializerSettings
     {
 

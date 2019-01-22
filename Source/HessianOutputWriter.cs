@@ -1,18 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using LibraProgramming.Hessian.Extension;
+using LibraProgramming.Serialization.Hessian.Core;
+using LibraProgramming.Serialization.Hessian.Core.Extensions;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
     /// <summary>
     /// Class for writing Hessian-encoded data into stream. 
     /// </summary>
     public class HessianOutputWriter : DisposableStreamHandler
     {
+        private readonly Stack<DisposeAction<object>> arrays;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public HessianOutputWriter(Stream stream)
             : base(stream)
         {
+            arrays = new Stack<DisposeAction<object>>();
         }
 
         /// <summary>
@@ -47,6 +56,12 @@ namespace LibraProgramming.Hessian
             WriteBytes(buffer, 0, buffer.Length);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
         public virtual void WriteBytes(byte[] buffer, int offset, int count)
         {
             if (offset < 0)
@@ -71,7 +86,7 @@ namespace LibraProgramming.Hessian
 
             while (count > chunkSize)
             {
-                Stream.WriteByte(Marker.BinaryNonfinalChunk);
+                Stream.WriteByte(Marker.BinaryNonFinalChunk);
                 Stream.WriteByte(chunkSize >> 8);
                 Stream.WriteByte(chunkSize & 0xFF);
                 Stream.Write(buffer, offset, chunkSize);
@@ -86,6 +101,10 @@ namespace LibraProgramming.Hessian
             Stream.Write(buffer, offset, count);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteDateTime(DateTime value)
         {
             if (value.Second == 0)
@@ -114,6 +133,10 @@ namespace LibraProgramming.Hessian
             Stream.WriteByte((byte)dt);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteDouble(double value)
         {
             if (value.Equals(0.0d))
@@ -176,6 +199,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteInt32(int value)
         {
             if (-16 <= value && value < 48)
@@ -203,6 +230,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteInt64(long value)
         {
             if (-8 <= value && value < 16)
@@ -242,6 +273,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public virtual void WriteString(string value)
         {
             if (String.IsNullOrEmpty(value))
@@ -281,7 +316,7 @@ namespace LibraProgramming.Hessian
                 var chunk = value.Substring(position, count);
                 var bytes = Encoding.UTF8.GetBytes(chunk.ToCharArray());
 
-                Stream.WriteByte(final ? Marker.StringFinalChunk : Marker.StringNonfinalChunk);
+                Stream.WriteByte(final ? Marker.StringFinalChunk : Marker.StringNonFinalChunk);
                 Stream.WriteByte((byte)(count >> 8));
                 Stream.WriteByte((byte)count);
                 Stream.Write(bytes, 0, bytes.Length);
@@ -290,15 +325,25 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void BeginClassDefinition()
         {
             Stream.WriteByte(Marker.ClassDefinition);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void EndClassDefinition()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
         public virtual void WriteObjectReference(int index)
         {
             if (index < 0x10)
@@ -312,10 +357,76 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
         public virtual void WriteInstanceReference(int index)
         {
             Stream.WriteByte(Marker.InstanceReference);
             WriteInt32(index);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elementType"></param>
+        /// <param name="length"></param>
+        public virtual IDisposable BeginFixedArray(string elementType, int length)
+        {
+            if (8 > length)
+            {
+                Stream.WriteByte((byte) (0x70 + length));
+                WriteString(elementType);
+            }
+            else
+            {
+                Stream.WriteByte(Marker.FixedLengthList);
+                WriteString(elementType);
+                WriteInt32(length);
+            }
+
+            var scope = new object();
+            var disposer = new DisposeAction<object>(scope, context =>
+            {
+                var top = arrays.Pop();
+
+                if (top.Context != context)
+                {
+                    throw new HessianSerializerException();
+                }
+            });
+
+            arrays.Push(disposer);
+
+            return disposer;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elementType"></param>
+        public virtual IDisposable BeginArray(string elementType)
+        {
+            Stream.WriteByte(Marker.BeginList);
+            WriteString(elementType);
+
+            var scope = new object();
+            var disposer = new DisposeAction<object>(scope, context =>
+            {
+                var top = arrays.Pop();
+
+                if (top.Context != context)
+                {
+                    throw new HessianSerializerException();
+                }
+
+                Stream.WriteByte(Marker.EndList);
+            });
+
+            arrays.Push(disposer);
+
+            return disposer;
         }
     }
 }

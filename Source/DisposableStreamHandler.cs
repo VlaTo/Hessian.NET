@@ -1,21 +1,28 @@
 ﻿using System;
 using System.IO;
 
-namespace LibraProgramming.Hessian
+namespace LibraProgramming.Serialization.Hessian
 {
     /// <summary>
     /// 
     /// </summary>
-    public class DisposableStreamHandler : IDisposable
+    public abstract class DisposableStreamHandler : IDisposable
     {
         private bool disposed;
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected Stream Stream
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         protected DisposableStreamHandler(Stream stream)
         {
             Stream = stream;
@@ -32,6 +39,10 @@ namespace LibraProgramming.Hessian
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dispose"></param>
         protected virtual void Dispose(bool dispose)
         {
             if (!disposed)
