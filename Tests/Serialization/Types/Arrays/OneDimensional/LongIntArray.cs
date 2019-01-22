@@ -1,7 +1,7 @@
 ﻿using LibraProgramming.Serialization.Hessian.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LibraProgramming.Serialization.Tests.Serialization.Types.Arrays
+namespace LibraProgramming.Serialization.Tests.Serialization.Types.Arrays.OneDimensional
 {
     [TestClass]
     public class LongIntArray : SerializerContextBase
@@ -17,7 +17,7 @@ namespace LibraProgramming.Serialization.Tests.Serialization.Types.Arrays
         [TestMethod]
         public void Check1()
         {
-            Assert.AreEqual(25, Output.Length);
+            Assert.AreEqual(21, Output.Length);
         }
 
         [TestMethod]

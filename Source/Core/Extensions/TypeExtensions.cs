@@ -52,7 +52,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable<Type> GetInterfaces(this Type type)
+        public static IEnumerable<Type> GetInterfaces2(this Type type)
         {
 #if NETSTANDARD13
             var info = type.GetTypeInfo();
@@ -84,13 +84,13 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool IsGenericType(this Type type)
+        public static bool IsGenericType2(this Type type)
         {
 #if NETSTANDARD13
             var info = type.GetTypeInfo();
-            return info.IsGenericType && info.ContainsGenericParameters;
+            return info.IsGenericType;
 #else
-            return type.IsGenericType && type.ContainsGenericParameters;
+            return type.IsGenericType;
 #endif
         }
 
@@ -111,6 +111,21 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         }
 
         /// <summary>
+        /// Determines whether an instance of a specified type can be assigned to an instance of the current type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="candidate">The type to compare with the <paramref name="type"/>.</param>
+        /// <returns></returns>
+        public static bool IsAssignableFrom2(this Type type, Type candidate)
+        {
+#if NETSTANDARD13
+            return type.GetTypeInfo().IsAssignableFrom(candidate.GetTypeInfo());
+#else
+            return type.IsAssignableFrom(candidate);
+#endif
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="type"></param>
@@ -125,15 +140,19 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool IsTypedCollection(this Type type)
+        public static bool IsTypedList(this Type type)
         {
-            if (type.IsGenericType())
+            if (type.IsGenericType2())
             {
                 var definition = type.GetGenericTypeDefinition();
-                return typeof(ICollection) == definition;
+
+                if (typeof(IList<>) == definition)
+                {
+                    return true;
+                }
             }
 
-            return type.GetInterfaces().Any(IsTypedCollection);
+            return type.GetInterfaces2().Any(IsTypedList);
         }
 
         /// <summary>
@@ -141,30 +160,39 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool IsEnumerable(this Type type)
+        public static bool IsTypedCollection(this Type type)
         {
-            if (typeof(IEnumerable) == type)
+            if (type.IsGenericType2())
             {
-                return true;
-            }
+                var definition = type.GetGenericTypeDefinition();
 
-            if (type.IsGenericType())
-            {
-                var temp = type.GetGenericTypeDefinition();
-                return typeof(IEnumerable) == temp;
-            }
-
-            var interfaces = type.GetInterfaces();
-
-            foreach (var @interface in interfaces)
-            {
-                if (@interface.IsEnumerable())
+                if (typeof(ICollection<>) == definition)
                 {
                     return true;
                 }
             }
 
-            return false;
+            return type.GetInterfaces2().Any(IsTypedCollection);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsTypedEnumerable(this Type type)
+        {
+            if (type.IsGenericType2())
+            {
+                var definition = type.GetGenericTypeDefinition();
+
+                if (typeof(IEnumerable<>) == definition)
+                {
+                    return true;
+                }
+            }
+
+            return type.GetInterfaces2().Any(IsTypedEnumerable);
         }
     }
 }

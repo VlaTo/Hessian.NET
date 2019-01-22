@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections;
 
 namespace LibraProgramming.Serialization.Hessian
 {
     /// <summary>
     /// 
     /// </summary>
-    public sealed class FixedLengthTypedArrayElement : ISerializationElement
+    public sealed class VariableLengthTypedListElement : ISerializationElement
     {
-        /// <inheritdoc cref="ISerializationElement.ObjectType" />
+        /// <summary>
+        /// 
+        /// </summary>
         public Type ObjectType
         {
             get;
@@ -24,11 +27,12 @@ namespace LibraProgramming.Serialization.Hessian
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="objectType"></param>
         /// <param name="element"></param>
-        public FixedLengthTypedArrayElement(ISerializationElement element)
+        public VariableLengthTypedListElement(Type objectType, ISerializationElement element)
         {
+            ObjectType = objectType;
             Element = element;
-            ObjectType = element.ObjectType.MakeArrayType(1);
         }
 
         /// <inheritdoc cref="ISerializationElement.Serialize" />
@@ -57,28 +61,19 @@ namespace LibraProgramming.Serialization.Hessian
 
             }
 
-            WriteArray(writer, (Array) graph, context);
+            using (writer.BeginArray(ObjectType.Name))
+            {
+                foreach (var item in (IEnumerable) graph)
+                {
+                    Element.Serialize(writer, item, context);
+                }
+            }
         }
 
         /// <inheritdoc cref="ISerializationElement.Deserialize" />
         public object Deserialize(HessianInputReader reader, HessianSerializationContext context)
         {
             throw new NotImplementedException();
-        }
-
-        private void WriteArray(HessianOutputWriter writer, Array array, HessianSerializationContext context)
-        {
-            using (writer.BeginFixedArray(ObjectType.Name, array.Length))
-            {
-                var index = array.GetLowerBound(0);
-                var end = array.GetUpperBound(0);
-
-                for (; index <= end; index++)
-                {
-                    var item = array.GetValue(index);
-                    Element.Serialize(writer, item, context);
-                }
-            }
         }
     }
 }

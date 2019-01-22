@@ -65,7 +65,7 @@ namespace LibraProgramming.Serialization.Tests
                     var ch = (char) bytes[offset + index];
 
                     line
-                        .Append(Char.IsLetterOrDigit(ch) ? ch : '.')
+                        .Append(IsPrintable(ch) ? ch : '.')
                         .Append(' ');
                 }
 
@@ -73,6 +73,11 @@ namespace LibraProgramming.Serialization.Tests
 
                 offset += count;
             }
+        }
+
+        private static bool IsPrintable(char ch)
+        {
+            return Char.IsLetterOrDigit(ch) || Char.IsPunctuation(ch) || Char.IsSeparator(ch);
         }
     }
 }

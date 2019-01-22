@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LibraProgramming.Serialization.Tests.Serialization.Types.Arrays.OneDimensional
 {
-    [TestClass]
+    [TestClass, Ignore]
     public class ShortUntypedArray : SerializerContextBase
     {
         //protected override object Data => new object[] {0, 1, 'c', "string"};

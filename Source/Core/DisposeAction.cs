@@ -8,16 +8,31 @@ namespace LibraProgramming.Serialization.Hessian.Core
     /// <typeparam name="TContext"></typeparam>
     internal sealed class DisposeAction<TContext> : IDisposable
     {
-        private readonly TContext context;
-        private readonly Action<DisposeAction<TContext>, TContext> action;
+        private readonly Action<TContext> action;
         private bool disposed;
 
-        public DisposeAction(TContext context, Action<DisposeAction<TContext>, TContext> action)
+        /// <summary>
+        /// 
+        /// </summary>
+        public TContext Context
         {
-            this.context = context;
-            this.action = action;
+            get;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="action"></param>
+        public DisposeAction(TContext context, Action<TContext> action)
+        {
+            this.action = action;
+            Context = context;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -34,7 +49,7 @@ namespace LibraProgramming.Serialization.Hessian.Core
             {
                 if (dispose)
                 {
-                    action.Invoke(this, context);
+                    action.Invoke(Context);
                 }
             }
             finally

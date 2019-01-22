@@ -16,7 +16,7 @@ namespace LibraProgramming.Serialization.Tests.Serialization.Types.Arrays.OneDim
         [TestMethod]
         public void Check1()
         {
-            Assert.AreEqual(17, Output.Length);
+            Assert.AreEqual(13, Output.Length);
         }
 
         [TestMethod]

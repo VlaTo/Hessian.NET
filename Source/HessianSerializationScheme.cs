@@ -55,9 +55,19 @@ namespace LibraProgramming.Serialization.Hessian
                 return BuildArraySerializationElement(type, catalog, factory);
             }
 
+            if (type.IsTypedList())
+            {
+                return BuildListSerializationElement(type, catalog, factory);
+            }
+
             if (type.IsTypedCollection())
             {
                 return BuildCollectionSerializationElement(type, catalog, factory);
+            }
+
+            if (type.IsTypedEnumerable())
+            {
+                return BuildEnumerableSerializationElement(type, catalog, factory);
             }
 
             return BuildClassSerializationElement(type, catalog, factory);
@@ -121,7 +131,17 @@ namespace LibraProgramming.Serialization.Hessian
                 // untyped
             }
 
-            return new FixedLengthTypedArrayElement(
+            return new FixedLengthTypedListElement(
+                elementType.MakeArrayType(1),
+                CreateSerializationElement(elementType, catalog, factory)
+            );
+        }
+
+        private static ISerializationElement BuildListSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        {
+            var elementType = type.GetGenericTypeArgument();
+            return new FixedLengthTypedListElement(
+                typeof(IList<>).MakeGenericType(elementType),
                 CreateSerializationElement(elementType, catalog, factory)
             );
         }
@@ -129,19 +149,19 @@ namespace LibraProgramming.Serialization.Hessian
         private static ISerializationElement BuildCollectionSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
             var elementType = type.GetGenericTypeArgument();
-
-            return new TypedCollectionElement(
+            return new FixedLengthTypedListElement(
+                typeof(ICollection<>).MakeGenericType(elementType),
                 CreateSerializationElement(elementType, catalog, factory)
             );
         }
 
-        /*private static ISerializationElement BuildEnumerableSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
+        private static ISerializationElement BuildEnumerableSerializationElement(Type type, IDictionary<Type, ISerializationElement> catalog, IObjectSerializerFactory factory)
         {
-            var genericType = type.GetGenericType();
-
-            return new VariableLengthTypedArrayElement(
-                genericType
+            var elementType = type.GetGenericTypeArgument();
+            return new VariableLengthTypedListElement(
+                typeof(IEnumerable<>).MakeGenericType(elementType),
+                CreateSerializationElement(elementType, catalog, factory)
             );
-        }*/
+        }
     }
 }

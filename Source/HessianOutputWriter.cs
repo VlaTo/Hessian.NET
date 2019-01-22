@@ -12,7 +12,7 @@ namespace LibraProgramming.Serialization.Hessian
     /// </summary>
     public class HessianOutputWriter : DisposableStreamHandler
     {
-        private readonly Stack<DisposeAction<ArrayContext>> arrays;
+        private readonly Stack<DisposeAction<object>> arrays;
 
         /// <summary>
         /// 
@@ -21,7 +21,7 @@ namespace LibraProgramming.Serialization.Hessian
         public HessianOutputWriter(Stream stream)
             : base(stream)
         {
-            arrays = new Stack<DisposeAction<ArrayContext>>();
+            arrays = new Stack<DisposeAction<object>>();
         }
 
         /// <summary>
@@ -386,15 +386,15 @@ namespace LibraProgramming.Serialization.Hessian
                 WriteInt32(length);
             }
 
-            var arrayContext = new ArrayContext();
-            var disposer = new DisposeAction<ArrayContext>(arrayContext, (instance, context) =>
+            var scope = new object();
+            var disposer = new DisposeAction<object>(scope, context =>
             {
-                if (arrays.Pop() != instance)
+                var top = arrays.Pop();
+
+                if (top.Context != context)
                 {
                     throw new HessianSerializerException();
                 }
-
-                EndFixedArray(context);
             });
 
             arrays.Push(disposer);
@@ -402,16 +402,31 @@ namespace LibraProgramming.Serialization.Hessian
             return disposer;
         }
 
-        private void EndFixedArray(ArrayContext context)
-        {
-        }
-
         /// <summary>
         /// 
         /// </summary>
-        private class ArrayContext
+        /// <param name="elementType"></param>
+        public virtual IDisposable BeginArray(string elementType)
         {
-            
+            Stream.WriteByte(Marker.BeginList);
+            WriteString(elementType);
+
+            var scope = new object();
+            var disposer = new DisposeAction<object>(scope, context =>
+            {
+                var top = arrays.Pop();
+
+                if (top.Context != context)
+                {
+                    throw new HessianSerializerException();
+                }
+
+                Stream.WriteByte(Marker.EndList);
+            });
+
+            arrays.Push(disposer);
+
+            return disposer;
         }
     }
 }
