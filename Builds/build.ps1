@@ -32,7 +32,7 @@ properties {
     @{Framework = "netstandard2.0"; TestFramework = "netcoreapp2.1"; Enabled=$true},
     @{Framework = "netstandard1.3"; TestFramework = "netcoreapp1.1"; Enabled=$true},
     @{Framework = "net45"; TestFramework = "net46"; Enabled=$true},
-    @{Framework = "net40"; Enabled=$true},
+    @{Framework = "net40"; Enabled=$true}
   )
 }
 
