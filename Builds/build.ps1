@@ -1,9 +1,9 @@
 properties {
   $zipFileName = "Json120r1.zip"
   $majorVersion = "0.1"
-  $majorWithReleaseVersion = "0.1.0"
+  $majorMinorReleaseVersion = "0.1.0"
   $nugetPrerelease = "dev"
-  $version = GetVersion $majorWithReleaseVersion
+  $version = GetVersion $majorMinorReleaseVersion
   $packageId = "LibraProgramming.Hessian"
   $signAssemblies = $false
   $signKeyPath = "C:\Development\Releases\libraprogramming.snk"
@@ -25,8 +25,8 @@ properties {
   $nugetPath = "$buildDir\Temp\nuget.exe"
   $vswhereVersion = "2.3.2"
   $vswherePath = "$buildDir\Temp\vswhere.$vswhereVersion"
-  $nunitConsoleVersion = "3.8.0"
-  $nunitConsolePath = "$buildDir\Temp\NUnit.ConsoleRunner.$nunitConsoleVersion"
+  # $nunitConsoleVersion = "3.8.0"
+  # $nunitConsolePath = "$buildDir\Temp\NUnit.ConsoleRunner.$nunitConsoleVersion"
 
   $builds = @(
     @{Framework = "netstandard2.0"; TestFramework = "netcoreapp2.1"; Enabled=$true},
@@ -67,7 +67,7 @@ task Build -depends Clean {
   EnsureDotNetCli
   EnsureNuGetExists
   EnsureNuGetPackage "vswhere" $vswherePath $vswhereVersion
-  EnsureNuGetPackage "NUnit.ConsoleRunner" $nunitConsolePath $nunitConsoleVersion
+  # EnsureNuGetPackage "NUnit.ConsoleRunner" $nunitConsolePath $nunitConsoleVersion
 
   $script:msBuildPath = GetMsBuildPath
   Write-Host "MSBuild path $script:msBuildPath"
@@ -134,4 +134,21 @@ function EnsureNuGetPackage($packageName, $packagePath, $packageVersion)
     Write-Host "Couldn't find $packagePath. Downloading with NuGet"
     exec { & $nugetPath install $packageName -OutputDirectory $buildDir\Temp -Version $packageVersion -ConfigFile "$sourceDir\nuget.config" | Out-Default } "Error restoring $packagePath"
   }
+}
+
+function GetVersion($majorVersion)
+{
+    $now = [DateTime]::Now
+
+    $year = $now.Year - 2000
+    $month = $now.Month
+    $totalMonthsSince2000 = ($year * 12) + $month
+    $day = $now.Day
+    $minor = "{0}{1:00}" -f $totalMonthsSince2000, $day
+
+    $hour = $now.Hour
+    $minute = $now.Minute
+    $revision = "{0:00}{1:00}" -f $hour, $minute
+
+    return $majorVersion + "." + $minor
 }
