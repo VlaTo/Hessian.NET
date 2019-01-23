@@ -20,9 +20,14 @@ steps:
 
 - script: |
     dotnet build --configuration $(buildConfiguration)
-    
-#  displayName: 'dotnet build $(buildConfiguration)'
+    dotnet test tests --configuration $(buildConfiguration) --logger trx
 
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+    
 # - powershell: |
 #    $basePath = resolve-path .
 #    $version = Get-Content .\Builds\version.json | Out-String | ConvertFrom-Json
