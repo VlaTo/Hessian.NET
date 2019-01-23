@@ -18,18 +18,20 @@ steps:
   inputs:
     version: '2.2.101'
 
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- script: |
+    dotnet build --configuration $(buildConfiguration)
+    
+#  displayName: 'dotnet build $(buildConfiguration)'
 
-- powershell: |
-    $basePath = resolve-path .
-    $version = Get-Content .\Builds\version.json | Out-String | ConvertFrom-Json
-    $buildNumber = [int]$Env:BuildId
-    write-host "Build number $buildNumber" -fore white
-    $nugetPrerelease = if ($Env:SourceBranch.StartsWith("refs/heads/release/")) { $version.Prerelease } else { "build$($buildNumber.ToString("D6"))" }
-    write-host "Prerelease $nugetPrerelease" -fore white
-    .\Builds\run.build.ps1 -properties @{"majorVersion"="$($version.Major).0"; "majorWithReleaseVersion"="$($version.Major).0.$($version.Release)"; "nugetPrerelease"=$nugetPrerelease; "zipFileName"="Json$($version.Major)0r$($version.Release).zip"; "signAssemblies"=$sign; "signKeyPath"=$keyPath; "treatWarningsAsErrors"=$true; "buildNuGet"=$true}
-  env:
-    BuildId: $(Build.BuildId)
-    SourceBranch: $(Build.SourceBranch)
-  displayName: 'Run build'
+# - powershell: |
+#    $basePath = resolve-path .
+#    $version = Get-Content .\Builds\version.json | Out-String | ConvertFrom-Json
+#    $buildNumber = [int]$Env:BuildId
+#    write-host "Build number $buildNumber" -fore white
+#    $nugetPrerelease = if ($Env:SourceBranch.StartsWith("refs/heads/release/")) { $version.Prerelease } else { "build$($buildNumber.ToString("D6"))" }
+#    write-host "Prerelease $nugetPrerelease" -fore white
+#    .\Builds\run.build.ps1 -properties @{"majorVersion"="$($version.Major).0"; "majorWithReleaseVersion"="$($version.Major).0.$($version.Release)"; "nugetPrerelease"=$nugetPrerelease; "zipFileName"="Json$($version.Major)0r$($version.Release).zip"; "signAssemblies"=$sign; "signKeyPath"=$keyPath; "treatWarningsAsErrors"=$true; "buildNuGet"=$true}
+#  env:
+#    BuildId: $(Build.BuildId)
+#    SourceBranch: $(Build.SourceBranch)
+#  displayName: 'Run build'
