@@ -41,7 +41,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
 #if (NET40 || NET45 || NETSTANDARD20)
-            return type.GetProperties(BindingFlags.DeclaredOnly);
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 #else
             return type.GetTypeInfo().DeclaredProperties;
 #endif
