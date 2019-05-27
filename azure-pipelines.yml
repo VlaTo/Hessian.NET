@@ -30,7 +30,7 @@ steps:
 
 - task: PublishPipelineArtifact@0
   inputs:
-    artifactName: '/**/*.nupkg'
+    artifactName: 'LibraProgramming.Hessian.*.nupkg'
     targetPath: '$(Build.SourcesDirectory)'
 
 - task: NuGetCommand@2
