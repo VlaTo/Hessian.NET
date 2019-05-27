@@ -49,4 +49,3 @@ using (var stream = new MemoryStream(packet))
 
 ### Links ###
 * [Official Hessian 2.0 documentation](http://hessian.caucho.com/doc/hessian-serialization.html)
-* [NuGet package (0.1.1-dev)](https://www.nuget.org/packages/LibraProgramming.Hessian/0.1.1-dev)
