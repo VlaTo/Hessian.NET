@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LibraProgramming.Hessian</PackageId>
     <VersionPrefix>0.1.2</VersionPrefix>
-    <VersionSuffix>dev</VersionSuffix>
+    <VersionSuffix>prerelease</VersionSuffix>
     <Authors>Tolmachev Vladimir</Authors>
     <Company />
     <Product>Hessian.NET</Product>

@@ -1,20 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.271
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28917.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4093B042-2C09-4B39-9250-767A9CAB5680}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
 		README.md = README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{C9D09987-C5E2-4D43-A6A4-7A51E1B68237}"
-	ProjectSection(SolutionItems) = preProject
-		Builds\build.ps1 = Builds\build.ps1
-		psake.psm1 = psake.psm1
-		Builds\run.build.ps1 = Builds\run.build.ps1
-		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{FA363527-27A3-4023-8854-EC894C461D4F}"
@@ -44,7 +36,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C9D09987-C5E2-4D43-A6A4-7A51E1B68237} = {4093B042-2C09-4B39-9250-767A9CAB5680}
 		{9F2DAD1D-8535-446C-9621-0A12AF227C54} = {FA363527-27A3-4023-8854-EC894C461D4F}
 		{8E187A2F-971B-4AEC-A365-A9F9E4512543} = {6C2273D4-4533-4CD0-A695-25A4C0272D59}
 	EndGlobalSection
