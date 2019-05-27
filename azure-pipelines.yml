@@ -28,6 +28,11 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
+- task: PublishPipelineArtifact@0
+  inputs:
+    artifactName: '*.nupkg'
+    targetPath: '$(Build.BinariesDirectory)'
+
 - task: NuGetCommand@2
   displayName: 'Nuget package push'
   inputs:
