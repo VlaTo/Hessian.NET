@@ -27,7 +27,8 @@ steps:
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
-    
+
+
 # - powershell: |
 #    $basePath = resolve-path .
 #    $version = Get-Content .\Builds\version.json | Out-String | ConvertFrom-Json
