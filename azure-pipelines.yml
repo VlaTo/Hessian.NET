@@ -19,7 +19,7 @@ steps:
     version: '2.2.101'
 
 - script: |
-    dotnet build --configuration $(buildConfiguration)
+    dotnet build --configuration $(buildConfiguration) --output $(Build.BinariesDirectory)
     dotnet test tests --configuration $(buildConfiguration) --logger trx
 
 - task: PublishTestResults@2
