@@ -31,7 +31,7 @@ steps:
 - task: PublishPipelineArtifact@0
   inputs:
     artifactName: 'Deploy'
-    targetPath: '$(Build.BinaryDirectory)'
+    targetPath: '$(Build.BinariesDirectory)'
 
 - task: NuGetCommand@2
   displayName: 'Nuget package push'
