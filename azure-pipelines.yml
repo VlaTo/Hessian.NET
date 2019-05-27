@@ -30,8 +30,8 @@ steps:
 
 - task: PublishPipelineArtifact@0
   inputs:
-    artifactName: '*.nupkg'
-    targetPath: '$(Build.BinariesDirectory)'
+    artifactName: '/**/*.nupkg'
+    targetPath: '$(Build.SourcesDirectory)'
 
 - task: NuGetCommand@2
   displayName: 'Nuget package push'
