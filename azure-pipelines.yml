@@ -29,7 +29,7 @@ steps:
     testResultsFiles: '**/*.trx'
 
 - script: |
-   dotnet pack --output $(Build.ArtifactStagingDirectory) --no-build
+    dotnet pack --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
 
 - task: PublishBuildArtifacts@1
 
