@@ -28,10 +28,10 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
-- task: PublishPipelineArtifact@0
-  inputs:
-    artifactName: 'Deploy'
-    targetPath: '$(Build.SourcesDirectory)'
+- script: |
+    dotnet publish --output $(Build.ArtifactStagingDirectory)
+
+- task: PublishBuildArtifacts@1
 
 - task: NuGetCommand@2
   displayName: 'Nuget package push'
