@@ -1,6 +1,7 @@
 # A Hessian binary protocol #
 
 [![Build Status](https://dev.azure.com/tolmachewladimir/tolmachewladimir/_apis/build/status/VlaTo.Hessian.NET?branchName=master)](https://dev.azure.com/tolmachewladimir/tolmachewladimir/_build/latest?definitionId=2?branchName=master)
+[![Nuget Downloads](https://img.shields.io/nuget/dt/LibraProgramming.Hessian.svg?label=nuget&logo=nuget)](https://www.nuget.org/packages/LibraProgramming.Hessian/)
 
 This is implementation of Hessian 2.0 Web Service Protocol serializer for the .NET in the C#.
 
