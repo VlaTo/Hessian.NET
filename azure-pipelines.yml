@@ -22,6 +22,9 @@ steps:
     version: '2.2.101'
 
 - script: |
+    @echo "The assigned version: $(version)"
+
+- script: |
     dotnet build --configuration $(buildConfiguration)
     dotnet test tests --configuration $(buildConfiguration) --logger trx
 
@@ -30,9 +33,6 @@ steps:
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
-
-- script: |
-    @echo "The assigned version: $(version)"
 
 - task: NuGetCommand@2
   displayName: 'NugetPackagePack'
