@@ -44,9 +44,11 @@ steps:
     dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
 
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
 
 - task: NuGetCommand@2
   displayName: 'NugetPackagePush'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
   inputs:
     command: 'push'
     feedsToUse: 'select'
