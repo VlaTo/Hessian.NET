@@ -12,7 +12,9 @@ pool:
 variables:
   buildConfiguration: 'Release'
   major: 0
-  minor: 2
+  minor: 1
+  patch: '$(BUILD_BUILDNUMBER)'
+  version: '$(major).$(minor).$(patch)-prerelease'
 
 steps:
 - task: DotNetCoreInstaller@0
@@ -33,9 +35,8 @@ steps:
   displayName: 'NugetPackagePack'
   inputs:
     command: 'pack'
-    versioningScheme: 'byPrereleaseNumber'
-    majorVersion: '$(major)'
-    minorVersion: '$(minor)'
+    versioningScheme: 'ByEnvVar'
+    versionEnvVar: 'version'
     configuration: '$(buildConfiguration)'
     packDestination: '$(Build.ArtifactStagingDirectory)'
 
