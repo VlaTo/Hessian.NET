@@ -42,9 +42,10 @@ steps:
 #    configuration: '$(buildConfiguration)'
 #    packDestination: '$(Build.ArtifactStagingDirectory)'
 
-- script:
+- task: CmdLine@2
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
-    dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
+  inputs:
+    script: dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
 
 - task: PublishBuildArtifacts@1
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
