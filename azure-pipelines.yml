@@ -13,16 +13,13 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 1
-  patch: '$(Build.BuildNumber)'
-  version: '$(major).$(minor).$(patch)-prerelease'
+  patch: 3
+  version: '$(major).$(minor).$(patch)-preview.$(Build.BuildNumber)'
 
 steps:
 - task: DotNetCoreInstaller@0
   inputs:
     version: '2.2.101'
-
-- script: |
-    @echo "The assigned version: $(version)"
 
 - script: |
     dotnet build --configuration $(buildConfiguration)
