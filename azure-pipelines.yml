@@ -13,7 +13,7 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 1
-  patch: '$BUILD_BUILDNUMBER'
+  patch: '$(Build.BuildNumber)'
   version: '$(major).$(minor).$(patch)-prerelease'
 
 steps:
