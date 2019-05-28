@@ -32,18 +32,19 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
-- task: NuGetCommand@2
-  displayName: 'NugetPackagePack'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
-  inputs:
-    command: 'pack'
-    versioningScheme: 'ByEnvVar'
-    versionEnvVar: 'version'
-    configuration: '$(buildConfiguration)'
-    packDestination: '$(Build.ArtifactStagingDirectory)'
+#- task: NuGetCommand@2
+#  displayName: 'NugetPackagePack'
+#  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+#  inputs:
+#    command: 'pack'
+#    versioningScheme: 'ByEnvVar'
+#    versionEnvVar: 'version'
+#    configuration: '$(buildConfiguration)'
+#    packDestination: '$(Build.ArtifactStagingDirectory)'
 
-# - script: |
-#    dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
+- script:
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+    dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
 
 - task: PublishBuildArtifacts@1
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
