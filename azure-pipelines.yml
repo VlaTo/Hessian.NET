@@ -15,9 +15,6 @@ variables:
   major: 0
   minor: 1
   patch: 3
-
-variables:
-  condition: 
   version: '$(major).$(minor).$(patch)-build.$(Build.BuildNumber)'
 
 steps:
