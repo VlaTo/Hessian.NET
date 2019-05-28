@@ -31,6 +31,9 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
+- script: |
+    @echo "The assigned version: $(version)"
+
 - task: NuGetCommand@2
   displayName: 'NugetPackagePack'
   inputs:
