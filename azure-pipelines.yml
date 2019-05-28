@@ -4,6 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
+- master
 - release/*
 
 pool:
@@ -14,7 +15,10 @@ variables:
   major: 0
   minor: 1
   patch: 3
-  version: '$(major).$(minor).$(patch)-preview.$(Build.BuildNumber)'
+
+variables:
+  condition: 
+  version: '$(major).$(minor).$(patch)-build.$(Build.BuildNumber)'
 
 steps:
 - task: DotNetCoreInstaller@0
@@ -31,17 +35,18 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
-# - task: NuGetCommand@2
-#  displayName: 'NugetPackagePack'
-#  inputs:
-#    command: 'pack'
-#    versioningScheme: 'ByEnvVar'
-#    versionEnvVar: 'version'
-#    configuration: '$(buildConfiguration)'
-#    packDestination: '$(Build.ArtifactStagingDirectory)'
+- task: NuGetCommand@2
+  displayName: 'NugetPackagePack'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+  inputs:
+    command: 'pack'
+    versioningScheme: 'ByEnvVar'
+    versionEnvVar: 'version'
+    configuration: '$(buildConfiguration)'
+    packDestination: '$(Build.ArtifactStagingDirectory)'
 
-- script: |
-    dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
+# - script: |
+#    dotnet pack /p:PackageVersion=$(version) --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build --no-restore
 
 - task: PublishBuildArtifacts@1
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
