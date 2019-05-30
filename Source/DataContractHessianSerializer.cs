@@ -49,10 +49,10 @@ namespace LibraProgramming.Serialization.Hessian
         }
 
         /// <summary>
-        /// 
+        /// Deserializes object from the binary data in incoming stream.
         /// </summary>
-        /// <param name="stream"></param>
-        /// <returns></returns>
+        /// <param name="stream">The <see cref="System.IO.Stream" /> to be read from.</param>
+        /// <returns>The object that is constructed from stream data.</returns>
         public object ReadObject(Stream stream)
         {
             if (null == stream)

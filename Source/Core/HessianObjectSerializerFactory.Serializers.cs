@@ -99,30 +99,5 @@ namespace LibraProgramming.Serialization.Hessian.Core
                 return reader.ReadDouble();
             }
         }
-
-/*
-        /// <summary>
-        /// 
-        /// </summary>
-        private class ClassSerializer : IObjectSerializer
-        {
-            private readonly HessianSerializationContext context;
-
-            public ClassSerializer(HessianSerializationContext context)
-            {
-                this.context = context;
-            }
-
-            public void Serialize(HessianOutputWriter writer, object graph)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public object Deserialize(HessianInputReader reader)
-            {
-                return reader.
-            }
-        }
-*/
     }
 }

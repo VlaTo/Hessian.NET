@@ -26,7 +26,7 @@ namespace LibraProgramming.Serialization.Hessian
         /// <summary>
         /// 
         /// </summary>
-        protected LeadingByte LeadingByte
+        private LeadingByte LeadingByte
         {
             get;
             set;
@@ -356,7 +356,7 @@ namespace LibraProgramming.Serialization.Hessian
         /// <summary>
         /// 
         /// </summary>
-        protected void ReadLeadingByte()
+        private void ReadLeadingByte()
         {
             var data = Stream.ReadByte();
 

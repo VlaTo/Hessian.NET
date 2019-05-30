@@ -131,6 +131,11 @@ namespace LibraProgramming.Serialization.Hessian
                 // untyped
             }
 
+            if (typeof(byte) == elementType)
+            {
+                return new BinaryDataElement();
+            }
+
             return new FixedLengthTypedListElement(
                 elementType.MakeArrayType(1),
                 CreateSerializationElement(elementType, catalog, factory)
