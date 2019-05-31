@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-#if (NET45 || NETSTANDARD13 || NETSTANDARD20)
+#if (NET45 || NETSTANDARD1_3 || NETSTANDARD2_0)
 using System.Runtime.Serialization;
 #endif
 
@@ -20,16 +20,18 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns>
         /// A custom attribute that matches <typeparamref name="TAttribute" />, or <c>null</c> if no such attribute is found.
         /// </returns>
-        public static TAttribute GetCustomAttribute<TAttribute>(this Type type, bool inherit = false)
+        public static TAttribute GetAttribute<TAttribute>(this Type type, bool inherit = false)
             where TAttribute : Attribute
         {
 #if NET40
             var attributes = type.GetCustomAttributes(typeof(TAttribute), inherit);
             return 0 < attributes.Length ? (TAttribute) attributes[0] : null;
-#elif (NET45 || NETSTANDARD20)
-            return CustomAttributeExtensions.GetCustomAttribute<TAttribute>(type, inherit);
-#else
+#elif (NET45 || NETSTANDARD2_0)
+            return type.GetCustomAttribute<TAttribute>(inherit);
+#elif NETSTANDARD1_3
             return type.GetTypeInfo().GetCustomAttribute<TAttribute>(inherit);
+#else
+            throw new NotImplementedException();
 #endif
         }
 
@@ -40,25 +42,12 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns></returns>
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
-#if (NET40 || NET45 || NETSTANDARD20)
+#if (NET40 || NET45 || NETSTANDARD2_0)
             return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-#else
+#elif NETSTANDARD1_3
             return type.GetTypeInfo().DeclaredProperties;
-#endif
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static IEnumerable<Type> GetInterfaces2(this Type type)
-        {
-#if NETSTANDARD13
-            var info = type.GetTypeInfo();
-            return info.ImplementedInterfaces;
 #else
-            return type.GetInterfaces();
+            throw new NotImplementedException();
 #endif
         }
 
@@ -71,10 +60,12 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         {
             Type[] types;
 
-#if NETSTANDARD13
+#if NETSTANDARD1_3
             types = type.GenericTypeArguments;
-#else
+#elif (NET40 || NET45 || NETSTANDARD2_0)
             types = type.GetGenericArguments();
+#else
+            throw new NotImplementedException();
 #endif
             return types[0];
         }
@@ -84,45 +75,15 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool IsGenericType2(this Type type)
-        {
-#if NETSTANDARD13
-            var info = type.GetTypeInfo();
-            return info.IsGenericType;
-#else
-            return type.IsGenericType;
-#endif
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public static bool IsSimpleType(this Type type)
         {
-#if (NET40 || NET45 || NETSTANDARD20)
+#if (NET40 || NET45 || NETSTANDARD2_0)
             return type.IsValueType || type.IsEnum || type.IsPrimitive
-#else
+#elif NETSTANDARD1_3
             var info = type.GetTypeInfo();
             return info.IsValueType || info.IsEnum || info.IsPrimitive
 #endif
                    || typeof(string) == type;
-        }
-
-        /// <summary>
-        /// Determines whether an instance of a specified type can be assigned to an instance of the current type.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="candidate">The type to compare with the <paramref name="type"/>.</param>
-        /// <returns></returns>
-        public static bool IsAssignableFrom2(this Type type, Type candidate)
-        {
-#if NETSTANDARD13
-            return type.GetTypeInfo().IsAssignableFrom(candidate.GetTypeInfo());
-#else
-            return type.IsAssignableFrom(candidate);
-#endif
         }
 
         /// <summary>
@@ -142,7 +103,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns></returns>
         public static bool IsTypedList(this Type type)
         {
-            if (type.IsGenericType2())
+            if (type.IsGenericTypeInternal())
             {
                 var definition = type.GetGenericTypeDefinition();
 
@@ -152,7 +113,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
                 }
             }
 
-            return type.GetInterfaces2().Any(IsTypedList);
+            return type.GetInterfacesInternal().Any(IsTypedList);
         }
 
         /// <summary>
@@ -162,7 +123,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns></returns>
         public static bool IsTypedCollection(this Type type)
         {
-            if (type.IsGenericType2())
+            if (type.IsGenericTypeInternal())
             {
                 var definition = type.GetGenericTypeDefinition();
 
@@ -172,7 +133,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
                 }
             }
 
-            return type.GetInterfaces2().Any(IsTypedCollection);
+            return type.GetInterfacesInternal().Any(IsTypedCollection);
         }
 
         /// <summary>
@@ -182,7 +143,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns></returns>
         public static bool IsTypedEnumerable(this Type type)
         {
-            if (type.IsGenericType2())
+            if (type.IsGenericTypeInternal())
             {
                 var definition = type.GetGenericTypeDefinition();
 
@@ -192,7 +153,41 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
                 }
             }
 
-            return type.GetInterfaces2().Any(IsTypedEnumerable);
+            return type.GetInterfacesInternal().Any(IsTypedEnumerable);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static bool IsGenericTypeInternal(this Type type)
+        {
+#if NETSTANDARD1_3
+            var info = type.GetTypeInfo();
+            return info.IsGenericType;
+#elif (NET40 || NET45 || NETSTANDARD2_0)
+            return type.IsGenericType;
+#else
+            throw new NotImplementedException();
+#endif
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static IEnumerable<Type> GetInterfacesInternal(this Type type)
+        {
+#if NETSTANDARD1_3
+            var info = type.GetTypeInfo();
+            return info.ImplementedInterfaces;
+#elif (NET40 || NET45 || NETSTANDARD2_0)
+            return type.GetInterfaces();
+#else
+            throw new NotImplementedException();
+#endif
         }
     }
 }

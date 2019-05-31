@@ -80,7 +80,7 @@ namespace LibraProgramming.Serialization.Hessian
                 return existing;
             }
 
-            var contract = type.GetCustomAttribute<DataContractAttribute>();
+            var contract = type.GetAttribute<DataContractAttribute>();
 
             if (null == contract)
             {

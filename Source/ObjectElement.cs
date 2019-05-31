@@ -28,7 +28,7 @@ namespace LibraProgramming.Serialization.Hessian
             {
                 if (String.IsNullOrEmpty(classname))
                 {
-                    var attribute = ObjectType.GetCustomAttribute<DataContractAttribute>();
+                    var attribute = ObjectType.GetAttribute<DataContractAttribute>();
 
                     classname = null != attribute && false == String.IsNullOrEmpty(attribute.Name)
                         ? attribute.Name
