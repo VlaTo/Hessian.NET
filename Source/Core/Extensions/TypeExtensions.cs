@@ -23,10 +23,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         public static TAttribute GetCustomAttribute<TAttribute>(this Type type, bool inherit = false)
             where TAttribute : Attribute
         {
-#if NET40
-            var attributes = type.GetCustomAttributes(typeof(TAttribute), inherit);
-            return 0 < attributes.Length ? (TAttribute) attributes[0] : null;
-#elif (NET45 || NETSTANDARD20)
+#if (NET45 || NETSTANDARD20)
             return CustomAttributeExtensions.GetCustomAttribute<TAttribute>(type, inherit);
 #else
             return type.GetTypeInfo().GetCustomAttribute<TAttribute>(inherit);
@@ -40,7 +37,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns></returns>
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
-#if (NET40 || NET45 || NETSTANDARD20)
+#if (NET45 || NETSTANDARD20)
             return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 #else
             return type.GetTypeInfo().DeclaredProperties;
@@ -101,7 +98,7 @@ namespace LibraProgramming.Serialization.Hessian.Core.Extensions
         /// <returns></returns>
         public static bool IsSimpleType(this Type type)
         {
-#if (NET40 || NET45 || NETSTANDARD20)
+#if (NET45 || NETSTANDARD20)
             return type.IsValueType || type.IsEnum || type.IsPrimitive
 #else
             var info = type.GetTypeInfo();

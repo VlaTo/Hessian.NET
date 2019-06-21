@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using LibraProgramming.Serialization.Hessian;
 
 namespace LibraProgramming.Serialization.Tests.Serialization
@@ -10,7 +11,7 @@ namespace LibraProgramming.Serialization.Tests.Serialization
 
         protected abstract Action<HessianOutputWriter> Action { get; }
 
-        protected override void Act()
+        protected override Task ActAsync()
         {
             var stream = new MemoryStream();
 
@@ -21,6 +22,8 @@ namespace LibraProgramming.Serialization.Tests.Serialization
             }
 
             DebugWriteArray(Data);
+
+            return Task.CompletedTask;
         }
     }
 }

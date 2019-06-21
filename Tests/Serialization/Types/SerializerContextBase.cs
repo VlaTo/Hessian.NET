@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LibraProgramming.Serialization.Hessian;
 using System.IO;
-using LibraProgramming.Serialization.Hessian;
+using System.Threading.Tasks;
 
 namespace LibraProgramming.Serialization.Tests.Serialization.Types
 {
@@ -12,12 +12,13 @@ namespace LibraProgramming.Serialization.Tests.Serialization.Types
 
         protected DataContractHessianSerializer Serializer { get; private set; }
 
-        protected override void Arrange()
+        protected override Task ArrangeAsync()
         {
             Serializer = new DataContractHessianSerializer(Data.GetType(), settings: null);
+            return Task.CompletedTask;
         }
 
-        protected override void Act()
+        protected override Task ActAsync()
         {
             using (var stream = new MemoryStream())
             {
@@ -26,6 +27,8 @@ namespace LibraProgramming.Serialization.Tests.Serialization.Types
             }
 
             DebugWriteArray(Output);
+
+            return Task.CompletedTask;
         }
     }
 }

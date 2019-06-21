@@ -84,7 +84,7 @@ namespace LibraProgramming.Serialization.Hessian
 
             if (null == contract)
             {
-                throw new HessianSerializerException();
+                throw new HessianSerializerException($"The type: \'{type.Name}\' is not marked as serializable");
             }
 
             var properties = new List<PropertyElement>();

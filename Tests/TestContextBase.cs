@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LibraProgramming.Serialization.Tests
@@ -9,10 +10,10 @@ namespace LibraProgramming.Serialization.Tests
     public abstract class TestContextBase
     {
         [TestInitialize]
-        public void Setup()
+        public async Task Setup()
         {
-            Arrange();
-            Act();
+            await ArrangeAsync();
+            await ActAsync();
         }
 
         [TestCleanup]
@@ -20,12 +21,12 @@ namespace LibraProgramming.Serialization.Tests
         {
         }
 
-        protected abstract void Arrange();
+        protected abstract Task ArrangeAsync();
 
-        protected abstract void Act();
+        protected abstract Task ActAsync();
 
         [Conditional("DEBUG")]
-        protected void DebugWriteArray(byte[] bytes)
+        protected static void DebugWriteArray(byte[] bytes)
         {
             var formatProvider = CultureInfo.InvariantCulture;
             var offset = 0;
