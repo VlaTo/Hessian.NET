@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace LibraProgramming.Serialization.Hessian.Core
 {
-    internal class SendCallContext : IDisposable
+    internal class SendCallContext<TResponse> : IDisposable
     {
         private bool disposed;
 
-        private SendCallContext()
+        public TaskCompletionSource<TResponse> Completion
         {
+            get;
         }
 
-        public static SendCallContext Create()
+        private SendCallContext(TaskCompletionSource<TResponse> tcs)
         {
-            return new SendCallContext();
+            Completion = tcs;
+        }
+
+        public static SendCallContext<TResponse> Create(TaskCompletionSource<TResponse> tcs)
+        {
+            return new SendCallContext<TResponse>(tcs);
         }
 
         public void Dispose()

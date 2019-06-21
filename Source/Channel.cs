@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using LibraProgramming.Serialization.Hessian.Core;
 
 namespace LibraProgramming.Serialization.Hessian
 {
@@ -8,14 +7,8 @@ namespace LibraProgramming.Serialization.Hessian
     /// </summary>
     public abstract class Channel
     {
-        public Task SendAsync(byte[] payload)
-        {
-            return TaskEx.CompletedTask;
-        }
+        public abstract Task SendAsync(byte[] payload);
 
-        public Task<byte[]> ReceiveAsync()
-        {
-            return Task.FromResult(new byte[0]);
-        }
+        public abstract Task<byte[]> ReceiveAsync();
     }
 }

@@ -11,17 +11,12 @@ namespace LibraProgramming.Serialization.Hessian
         private readonly CallInvocationDetails<TRequest, TResponse> callInvocation;
         private CallHandler callHandler;
 
-        internal IReceivedMessageCallback ReceivedMessageCallback => this;
+        internal IReceivedMessageCallback<TResponse> ReceivedMessageCallback => this;
 
         public AsyncCall(CallInvocationDetails<TRequest, TResponse> callInvocation)
             : base(callInvocation.Serialize, callInvocation.Deserialize)
         {
-            if (null == callInvocation)
-            {
-                throw new ArgumentNullException(nameof(callInvocation));
-            }
-
-            this.callInvocation = callInvocation;
+            this.callInvocation = callInvocation ?? throw new ArgumentNullException(nameof(callInvocation));
         }
 
         /// <summary>
@@ -35,12 +30,12 @@ namespace LibraProgramming.Serialization.Hessian
             {
                 var tcs = new TaskCompletionSource<TResponse>();
 
-                callHandler = CreateCallHandler();
+                EnsureCallHandler();
 
-                using (var context = SendCallContext.Create())
+                using (var context = SendCallContext<TResponse>.Create(tcs))
                 {
                     var payload = Serialize.Invoke(request);
-                    callHandler.ClientCall(payload, context, tcs, ReceivedMessageCallback);
+                    callHandler.ClientCall(payload, context, ReceivedMessageCallback);
                 }
 
                 return tcs.Task;
@@ -83,9 +78,18 @@ namespace LibraProgramming.Serialization.Hessian
             return TaskEx.CompletedTask;
         }
 
-        private CallHandler CreateCallHandler()
+        protected override void OnClientResponse(bool success, TaskCompletionSource<TResponse> tcs, byte[] payload)
         {
-            return callInvocation.CreateCallHandler();
+            var response = Deserialize.Invoke(payload);
+            tcs.SetResult(response);
+        }
+
+        private void EnsureCallHandler()
+        {
+            if (null == callHandler)
+            {
+                callHandler = callInvocation.CreateCallHandler();
+            }
         }
     }
 }

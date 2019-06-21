@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace LibraProgramming.Serialization.Hessian.Core
@@ -28,21 +27,18 @@ namespace LibraProgramming.Serialization.Hessian.Core
         /// <param name="receivedMessageCallback"></param>
         public void ClientCall<TResponse>(
             byte[] payload,
-            SendCallContext context,
-            TaskCompletionSource<TResponse> tcs,
-            IReceivedMessageCallback receivedMessageCallback
+            SendCallContext<TResponse> context,
+            IReceivedMessageCallback<TResponse> receivedMessageCallback
         )
             where TResponse : class
         {
             var task = Task.Factory.StartNew(async () =>
             {
                 await channel.SendAsync(payload);
-                Debug.WriteLine("[CallHandler.ClientCall] send complete");
+
                 var buffer = await channel.ReceiveAsync();
-                var response = Activator.CreateInstance<TResponse>();
-                receivedMessageCallback.OnClientResponse(true, buffer);
-                Debug.WriteLine("[CallHandler.ClientCall] receive complete");
-                tcs.SetResult(response);
+
+                receivedMessageCallback.OnClientResponse(true, context.Completion, buffer);
             });
 
             taskQueue.Add(task);

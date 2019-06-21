@@ -4,7 +4,7 @@ using LibraProgramming.Serialization.Hessian.Core;
 
 namespace LibraProgramming.Serialization.Hessian
 {
-    internal abstract class AsyncCallBase<TWrite, TRead> : IReceivedMessageCallback, ISendCompletionCallback
+    internal abstract class AsyncCallBase<TWrite, TRead> : IReceivedMessageCallback<TRead>, ISendCompletionCallback
     {
         private readonly object syncRoot;
 
@@ -59,8 +59,11 @@ namespace LibraProgramming.Serialization.Hessian
             }
         }
 
-        void IReceivedMessageCallback.OnClientResponse(bool success, byte[] payload)
+        void IReceivedMessageCallback<TRead>.OnClientResponse(bool success, TaskCompletionSource<TRead> tcs, byte[] payload)
         {
+            OnClientResponse(success, tcs, payload);
         }
+
+        protected abstract void OnClientResponse(bool success, TaskCompletionSource<TRead> tcs, byte[] payload);
     }
 }

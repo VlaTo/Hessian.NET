@@ -19,7 +19,7 @@ namespace LibraProgramming.Serialization.Tests.Client
         protected override Task ArrangeAsync()
         {
             var channel = new TestChannel();
-            TestClient = new TestClient(new DefaultCallInvoker(channel));
+            TestClient = new TestClient(channel);
             return Task.CompletedTask;
         }
     }

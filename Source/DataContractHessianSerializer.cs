@@ -14,6 +14,7 @@ namespace LibraProgramming.Serialization.Hessian
     {
         private readonly Type type;
         private readonly HessianSerializerSettings settings;
+        private HessianSerializationScheme scheme;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataContractHessianSerializer" /> class to serialize or deserialize an object of the specified type and serializer settings.
@@ -38,13 +39,12 @@ namespace LibraProgramming.Serialization.Hessian
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            var factory = new HessianObjectSerializerFactory();
-            var scheme = HessianSerializationScheme.CreateFromType(type, factory);
+            var serializationScheme = GetSerializationScheme();
 
             using (var writer = new HessianOutputWriter(stream))
             {
                 var context = new HessianSerializationContext();
-                scheme.Serialize(writer, graph, context);
+                serializationScheme.Serialize(writer, graph, context);
             }
         }
 
@@ -60,14 +60,24 @@ namespace LibraProgramming.Serialization.Hessian
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            var factory = new HessianObjectSerializerFactory();
-            var scheme = HessianSerializationScheme.CreateFromType(type, factory);
+            var serializationScheme = GetSerializationScheme();
 
             using (var reader = new HessianInputReader(stream))
             {
                 var context = new HessianSerializationContext();
-                return scheme.Deserialize(reader, context);
+                return serializationScheme.Deserialize(reader, context);
             }
+        }
+
+        private HessianSerializationScheme GetSerializationScheme()
+        {
+            if (null == scheme)
+            {
+                var factory = new HessianObjectSerializerFactory();
+                scheme = HessianSerializationScheme.CreateFromType(type, factory);
+            }
+
+            return scheme;
         }
     }
 }

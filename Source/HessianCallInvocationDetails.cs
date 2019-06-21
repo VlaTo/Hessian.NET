@@ -1,22 +1,40 @@
 ﻿using System.IO;
+using LibraProgramming.Serialization.Hessian.Core;
 
 namespace LibraProgramming.Serialization.Hessian
 {
-    public class HessianCallInvocationDetails<TRequest, TResponse>:CallInvocationDetails<TRequest,TResponse>
+    /// <summary>
+    /// Hessian call invocation class.
+    /// </summary>
+    /// <typeparam name="TRequest"></typeparam>
+    /// <typeparam name="TResponse"></typeparam>
+    public class HessianCallInvocationDetails<TRequest, TResponse> : CallInvocationDetails<TRequest, TResponse>
         where TRequest : class
         where TResponse : class
     {
         private readonly DataContractHessianSerializer serializer;
+        private readonly DataContractHessianSerializer deserializer;
 
+        /// <summary>
+        /// Initialize a new instance of the <see cref="HessianCallInvocationDetails{TRequest,TResponse}" /> class.
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="method"></param>
+        /// <param name="host"></param>
+        /// <param name="options"></param>
         public HessianCallInvocationDetails(Channel channel,
             Method<TRequest, TResponse> method,
             string host,
             CallOptions options)
             : base(channel, method, host, options)
         {
-            serializer = new DataContractHessianSerializer(typeof(TRequest));
+            var settings = DefaultHessianSerializerSettings.Instance;
+
+            serializer = new DataContractHessianSerializer(typeof(TRequest), settings);
+            deserializer = new DataContractHessianSerializer(typeof(TResponse), settings);
         }
 
+        /// <inheritdoc cref="CallInvocationDetails{TRequest,TResponse}.Serialize" />
         public override byte[] Serialize(TRequest request)
         {
             using (var stream = new MemoryStream())
@@ -26,9 +44,13 @@ namespace LibraProgramming.Serialization.Hessian
             }
         }
 
+        /// <inheritdoc cref="CallInvocationDetails{TRequest,TResponse}.Deserialize" />
         public override TResponse Deserialize(byte[] payload)
         {
-            throw new System.NotImplementedException();
+            using (var stream = new MemoryStream(payload))
+            {
+                return (TResponse) deserializer.ReadObject(stream);
+            }
         }
     }
 }
